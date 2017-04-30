@@ -1,0 +1,36 @@
+# um die EUR Leute aus der 1k zu holen.
+
+grep -vw FIN data/1k_all.panel > data/nonFIN.samples.list
+grep EUR data/nonFIN.samples.list | cut -f1 > data/nonFIN.samples.list2
+rm data/nonFIN.samples.list 
+mv data/nonFIN.samples.list2 data/nonFIN.samples.list
+grep FIN data/1k_all.panel | cut -f1 > data/FIN.samples.list
+grep EUR data/1k_all.panel  | cut -f1 > EUR.samples.list  
+vcf-subset -c EUR.samples.list data/1k_phase3_chr22.vcf.gz  | fill-an-ac | bgzip -c > data/EUR.chr22.phase3.vcf.gz
+
+# bcftools 
+bcftools call -c data/1k_phase3_chr22.vcf.gz
+bcftools stats -r data/gz/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
+bcftools stats data/gz/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz > bcftools-output/1k_stats_all
+
+bcftools stats --af-bins af-bins data/gz/gnomad.genomes.r2.0.1.sites.22.vcf.gz > bcftools-output/gnomad_stats_af-bins
+bcftools stats --threads 4 --af-bins af-bins data/gz/gnomad.genomes.r2.0.1.sites.22.vcf.gz > bcftools-output/gnomad_stats_af-bins
+bcftools stats data/gz/gnomad.genomes.r2.0.1.sites.22.vcf.gz > bcftools-output/stats_all
+
+
+# intersection
+bcftools index data/gnomad_chr22.vcf.gz 
+bcftools index data/EUR.chr22.phase3.vcf.gz
+bcftools isec data/EUR.chr22.phase3.vcf.gz data/gnomad_chr22.vcf.gz -p data/isec_EUR_Gnomad.vcf.gz
+
+
+# plot
+plot-vcfstats bcftools-output/1k_stats_all -p bcftools-output/1k_plot/ 
+
+# vcftools
+vcftools --counts --gzvcf ../data/gz/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
+vcftools --gzvcf data/gz/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz --FILTER-summary
+vcftools --gzvcf data/gz/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz --TsTv-summary
+vcftools --gzvcf data/gz/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz --snps
+vcftools --gzvcf data/gz/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz --keep-only-indels
+
