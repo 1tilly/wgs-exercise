@@ -1,5 +1,4 @@
-# um die EUR Leute aus der 1k zu holen.
-
+# for extracting EUR and non-FIN Eur from the 1k dataset
 grep -vw FIN data/1k_all.panel > data/nonFIN.samples.list
 grep EUR data/nonFIN.samples.list | cut -f1 > data/nonFIN.samples.list2
 rm data/nonFIN.samples.list 
