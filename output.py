@@ -27,3 +27,10 @@ def print_statistic_summary(stat_dict):
 	for k in stat_dict:
 		output += "{}\t{}\n".format(k, stat_dict[k].rstrip())
 	print(output)
+
+
+def plot_variant_frequencies(stats_1, stats_2):
+	pass
+
+def plot_minor_allele_frequencies(stats_1, stats_2):
+	pass
