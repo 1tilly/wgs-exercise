@@ -1,89 +1,54 @@
 #!/usr/env python3.5
 # -*- coding: utf-8 -*-
 
-import subprocess as sp
-import numpy as np
-
-
 __author__ = "Tobias Tilly"
-__name__ = "Parser"
+__name__ = "Analyzer"
+
 
 '''
- This module uses the vcftools and bcftools for generating statistics of the
- given vcf-File. Mainly the SNV-, INDEL-counts, the Ts/Tv-ratio and the allele
- frequencies (split into 20 bins).
- Besides that, the given gnomad and 1k genome vcf will be compared regarding
- the EUR and nonFIN-EUR individuals.
-
- ToDo:
-    create docstrings for methods and module variables
- '''
-
-# tools
-PATH_BCFTOOLS = "bcftools"
-PATH_VCFTOOLS = "vcftools"
-
-def execute_vcftools(file_path, filtering=[], output_options=[]):
-    cmd = [PATH_VCFTOOLS, '--gzvcf'] + file_path + filtering + output_options
-    process = sp.Popen(
-        cmd,
-        stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
-    output, err = process.communicate(
-        b"input data that is passed to subprocess' stdin")
-    rc = process.returncode
-    if rc != 0:
-        output = err
-    return rc, output.decode("utf-8")
+After the parser module is finished with its work, the analyzer will follow.
+The analyzer reads the statistics and transforms them into
+usable structures and extract hopefully further statistics and correlations.
+Afterwards the output module plots the data and creates a human readable
+output.
+'''
 
 
-def execute_bcftools(command, file_path, options=[]):
-    cmd = [PATH_BCFTOOLS] + command + options + file_path
-    process = sp.Popen(
-        cmd,
-        stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
-    output, err = process.communicate(
-        b"input data that is passed to subprocess' stdin")
-    rc = process.returncode
-    if rc != 0:
-        output = err
-    return rc, output.decode("utf-8")
+""" Parses the bcftools stats output for a statistic summary. Iterates over each
+	 	line and breaks the iteration if a specific line is reached (at the moment: 
+	 	"# QUAL")
+		Args: 
+			bcf_stats_output (iterable, e.g.: string or file): 
+                the output of the bcftools stats command
+		returns:
+			dictionary of statistics, holding the filename, sample_count, 
+				record_count, snp_count and indel_count. 
+        ToDo:
+            get the filename from the stats_output
+            the bcftools stats are multiple csvs in one file, would be nice 
+            to parse them accordingly
+            maybe split into multiple methods
+""" 
+def analyze_bcf_stats(bcf_stats_output):
+    stat_dict = {"filename":"HereShouldBeTheFilename"}
+    for line in bcf_stats_output.split('\n'):
+        if "SN" in line[0:4]:    
+            if "number of samples" in line:
+                stat_dict['sample_count'] = line.split("\t")[-1]
+            elif "number of records" in line:
+                stat_dict['record_count'] = line.split("\t")[-1]
+            elif "number of SNPs" in line:
+                stat_dict['snp_count'] = line.split("\t")[-1]
+            elif "number of indels" in line:
+                stat_dict['indel_count'] = line.split("\t")[-1]
+        elif "TSTV" in line[0:4]:
+            split_line = line.split("\t")
+            stat_dict['tstv'] = split_line[4]
+            stat_dict['tstv_1st_alt'] = split_line[7]
+        elif "AF" in line[0:2]:
+            #ToDo: check what to do with the 20 (or more) bins maybe plot them?
+            pass   
+        elif "# QUAL" in line[0:6]:
+            break 
 
-
-# Testing the execute_tool methods
-# The following part will be extended
-
-def get_bcf_stats(file_path):
-    command = ['stats']
-    file_path = [file_path]
-
-    rc, output = execute_bcftools(command, file_path)
-    if rc is 0:
-        return output
-    else:
-        # ToDo: Errorhandling
-        return output
-
-
-def get_stats_with_bins(start, end, step, file_path):
-    bins = np.arange(start, end, step)
-    command = ['stats']
-    options = ['--af-bins', "(" + ", ".join([str(x) for x in bins]) + ")"]
-    file_path = [file_path]
-
-    rc, output = execute_bcftools(command, file_path, options)
-    if rc is 0:
-        return output
-    else:
-        # ToDo: Errorhandling
-        return output
-
-
-def get_counts(file_path):
-    file_path = [file_path]
-    filtering = ["--counts"]
-    rc, output = execute_vcftools(file_path, filtering)
-    if rc is 0:
-        return output
-    else:
-        # ToDo: Errorhandling
-        return output
+    return stat_dict
