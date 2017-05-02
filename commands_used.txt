@@ -5,6 +5,7 @@ rm data/nonFIN.samples.list
 mv data/nonFIN.samples.list2 data/nonFIN.samples.list
 grep FIN data/1k_all.panel | cut -f1 > data/FIN.samples.list
 grep EUR data/1k_all.panel  | cut -f1 > EUR.samples.list  
+# following http://www.internationalgenome.org/faq/how-can-i-get-allele-frequency-my-variant/
 vcf-subset -c EUR.samples.list data/1k_phase3_chr22.vcf.gz  | fill-an-ac | bgzip -c > data/EUR.chr22.phase3.vcf.gz
 
 # bcftools 

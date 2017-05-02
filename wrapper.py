@@ -23,6 +23,7 @@ __name__ = "Wrapper"
 # tools
 PATH_BCFTOOLS = "bcftools"
 PATH_VCFTOOLS = "vcftools"
+PATH_SUBSET = "vcf-subset"
 
 def execute_vcftools(file_path, filtering=[], output_options=[]):
     cmd = [PATH_VCFTOOLS, '--gzvcf'] + file_path + filtering + output_options
@@ -50,9 +51,40 @@ def execute_bcftools(command, file_path, options=[]):
     return rc, output.decode("utf-8")
 
 
-def filter_for_EUR():
+"""
+    Args:
+        individuals(iterable): List of individuals, one per line
+        keyword(string): the word you are looking for
+        reverse(boolean): if True, all lines not containing the keyword are returned
+    Return:
+        filtered list of individuals, containing all columns
+
+"""
+def filter_list_for_population(individuals, keyword, reverse=False):
     # ToDo: filter a given file with vcf-subset for a list of individuals
-    pass
+    saved = []
+    for line in individuals:
+        if reverse and keyword not in line:
+            saved.append(line)
+        elif not reverse and keyword in readline:
+            saved.append(line)
+    return saved
+
+
+def vcf_subset(vcf_file, list):
+    cmd = [PATH_SUBSET,"-c", "(" + ",".join(list) +")", vcf_file, "|", "fill-an-ac", "|", "bgzip -c", ">", "subset_output.vcf.gz"]
+    process = sp.Popen(
+        cmd,
+        stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
+    output, err = process.communicate(
+        b"input data that is passed to subprocess' stdin")
+    rc = process.returncode
+    if rc != 0:
+        output = err
+    return rc, output.decode("utf-8")
+
+
+
 
 def get_intersection(files, output_dir):
     """ 
