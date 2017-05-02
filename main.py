@@ -53,5 +53,17 @@ def plot_af_stats():
 	#output.plot_allele_frequency_comparison(EUR_1k_af, EUR_gnomad_af, ['1000Genomes','GnomAD'])
 
 
+def subset_filtered_list():
+	population_list = open("data/1k_all.panel", 'r')
+	eur_list = wrapper.filter_list(population_list, "EUR")
+	eur_column = [x.split("\t")[0] for x in eur_list ]
+	nonFin_list = wrapper.filter_list(eur_list, "FIN", True)
+	nonFin_column = [x.split("\t")[0] for x in nonFin_list ]
+	wrapper.wrap_vcf_subset("data/1k_phase3_chr22.vcf.gz", eur_column, "eur_1k")
+	wrapper.wrap_vcf_subset("data/1k_phase3_chr22.vcf.gz", nonFin_column, "nonFin_1k")
+
+
+
 #shallow_analysis()
-plot_af_stats()
+#plot_af_stats()
+

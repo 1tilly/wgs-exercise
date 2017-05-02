@@ -60,28 +60,23 @@ def execute_bcftools(command, file_path, options=[]):
         filtered list of individuals, containing all columns
 
 """
-def filter_list_for_population(individuals, keyword, reverse=False):
-    # ToDo: filter a given file with vcf-subset for a list of individuals
+def filter_list(individuals, keyword, reverse=False):
     saved = []
     for line in individuals:
         if reverse and keyword not in line:
             saved.append(line)
-        elif not reverse and keyword in readline:
+        elif not reverse and keyword in line:
             saved.append(line)
     return saved
 
 
-def vcf_subset(vcf_file, list):
-    cmd = [PATH_SUBSET,"-c", "(" + ",".join(list) +")", vcf_file, "|", "fill-an-ac", "|", "bgzip -c", ">", "subset_output.vcf.gz"]
-    process = sp.Popen(
-        cmd,
-        stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
-    output, err = process.communicate(
-        b"input data that is passed to subprocess' stdin")
-    rc = process.returncode
-    if rc != 0:
-        output = err
-    return rc, output.decode("utf-8")
+def wrap_vcf_subset(vcf_file, list, prefix):
+
+    vcf_subset_process = sp.Popen((PATH_SUBSET,"-c", ",".join(list), vcf_file), stdout=sp.PIPE)
+    fill_an_ac_process = sp.Popen(('fill-an-ac',), stdin=vcf_subset_process.stdout, stdout=sp.PIPE)
+    with open("{}_subset_output.vcf.gz".format(prefix), "w") as output_file:
+        bgzip_process = sp.Popen(('bgzip', '-c'), stdin=fill_an_ac_process.stdout, stdout=output_file)
+    
 
 
 
