@@ -40,16 +40,77 @@ def print_statistic_summary(stat_dict):
 	print(output)
 
 
-def plot_variant_frequencies(stats):
-	datapoints = []
-	for line in stats:
+def plot_allele_frequencies(af_stats, legend, maf=False):
+	af_bins = []
+	n_of_snps = []
+	n_of_indels = []
+	for line in af_stats:
 		line = line.split('\t')
-		# ToDo: check if number of SNPs is optimal variable for plotting
-		datapoints.append((line[2], line[3]))
-	# ToDo: change axis-label, color etc
-	plt.plot(datapoints)
+		# collect data if maf is True and af is <= 0.5 or maf is False
+		if not(maf and line[2] > 0.5):
+			af_bins.append(line[2])
+			n_of_snps.append(line[3])
+			n_of_indels.append(line[6])
+		else:
+			break
+
+	fig = plt.figure()
+	plot1 = fig.add_subplot(211)
+	plot1.set_title('SNPs per allele frequency')
+	plot1.semilogy(af_bins, n_of_snps, marker='D', label=legend)
+	plot1.set_ylabel('Number of SNPs')
+	plot1.set_xlabel('Allele frequencies')
+	plot1.legend()
+	plot2 = fig.add_subplot(212)
+	plot2.set_title('INDELs per allele frequency')
+	plot2.semilogy(af_bins, n_of_indels, marker='D', label=legend)
+	plot2.set_ylabel('Number of INDELs')
+	plot2.set_xlabel('Allele frequencies')
+	plot2.legend()
 	plt.show()
 
 
-def plot_minor_allele_frequencies(stats):
-	pass
+def plot_allele_frequency_comparison(stats1, stats2, legend, maf=False):
+	af_bins1 = []
+	n_of_snps1 = []
+	n_of_indels1 = []
+	af_bins2 = []
+	n_of_snps2 = []
+	n_of_indels2 = []
+	for line in stats1:
+		line = line.split('\t')
+		# collect data if maf is True and af is <= 0.5 or maf is False
+		if not(maf and line[2] > 0.5):
+			af_bins1.append(line[2])
+			n_of_snps1.append(line[3])
+			n_of_indels1.append(line[6])
+		else:
+			break
+
+	for line in stats2:
+		line = line.split('\t')
+		# collect data if maf is True and af is <= 0.5 or maf is False
+		if not(maf and line[2] > 0.5):
+			af_bins2.append(line[2])
+			n_of_snps2.append(line[3])
+			n_of_indels2.append(line[6])
+		else:
+			break
+
+
+	fig = plt.figure()
+	plot1 = fig.add_subplot(211)
+	plot1.set_title('SNPs per allele frequency')
+	plot1.semilogy(af_bins1, n_of_snps1, marker='D', color='red', label=legend[0])
+	plot1.semilogy(af_bins2, n_of_snps2, marker='*', color='blue', label=legend[1])
+	plot1.set_ylabel('Number of SNPs')
+	plot1.set_xlabel('Allele frequencies')
+	plot1.legend()
+	plot2 = fig.add_subplot(212)
+	plot2.set_title('INDELs per allele frequency')
+	plot2.semilogy(af_bins1, n_of_indels1, marker='D', color='red', label=legend[0])
+	plot2.semilogy(af_bins2, n_of_indels2, marker='*', color='blue', label=legend[1])
+	plot2.set_ylabel('Number of INDELs')
+	plot2.set_xlabel('Allele frequencies')
+	plot2.legend()
+	plt.show()

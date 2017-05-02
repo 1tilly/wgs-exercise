@@ -49,6 +49,9 @@ def plot_af_stats():
 	with open(OUTPUT_BCFTOOLS + 'bcf_stats_gnomad_EUR', 'r') as f:
 		bcf_stats = f.read()
 		EUR_gnomad_af = parser.extract_allele_frequencies(bcf_stats)
-	output.plot_variant_frequencies(EUR_1k_af)
+	output.plot_allele_frequencies(EUR_1k_af, '1000Genomes')
+	#output.plot_allele_frequency_comparison(EUR_1k_af, EUR_gnomad_af, ['1000Genomes','GnomAD'])
 
+
+#shallow_analysis()
 plot_af_stats()
