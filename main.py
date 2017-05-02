@@ -11,8 +11,8 @@ ToDo:
 	this could be extended for a nice CLI (with docopt)
 '''
 
+import wrapper
 import parser
-import analyzer
 import output
 
 
@@ -28,18 +28,16 @@ PATH_GNOMAD_EUR_VCFGZ = "data/isec_EUR_Gnomad/0003.vcf"
 
 
 def shallow_analysis():
-	bcf_stats = parser.get_bcf_stats(PATH_1K_VCFGZ)
-	stat_summary = analyzer.analyze_bcf_stats(bcf_stats)
+	bcf_stats = wrapper.get_bcf_stats(PATH_1K_VCFGZ)
+	stat_summary = parser.analyze_bcf_stats(bcf_stats)
 	output.print_statistic_summary(stat_summary)
 
 
 def create_EUR_stats():
-	bcf_stats_1k_EUR = parser.get_bcf_stats(PATH_1K_EUR_VCFGZ)
+	bcf_stats_1k_EUR = wrapper.get_stats_with_bins(0.0,1.0, 0.05, PATH_1K_EUR_VCFGZ)
 	with open(OUTPUT_BCFTOOLS+"bcf_stats_1k_EUR", 'w') as f:
 		f.write(bcf_stats_1k_EUR)
-	bcf_stats_gnomad_EUR = parser.get_bcf_stats(PATH_GNOMAD_EUR_VCFGZ)
+	bcf_stats_gnomad_EUR = wrapper.get_stats_with_bins(0.0,1.0, 0.05, PATH_GNOMAD_EUR_VCFGZ)
 	with open(OUTPUT_BCFTOOLS+"bcf_stats_gnomad_EUR", 'w') as f:
 		f.write(bcf_stats_gnomad_EUR)
 		
-
-create_EUR_stats()

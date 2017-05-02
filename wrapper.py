@@ -6,7 +6,7 @@ import numpy as np
 
 
 __author__ = "Tobias Tilly"
-__name__ = "Parser"
+__name__ = "Wrapper"
 
 '''
  This module uses the vcftools and bcftools for generating statistics of the
