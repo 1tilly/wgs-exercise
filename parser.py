@@ -52,3 +52,15 @@ def analyze_bcf_stats(bcf_stats_output):
             break 
 
     return stat_dict
+
+
+def extract_allele_frequencies(bcf_stats_output):
+    output = []
+
+    for line in bcf_stats_output.split('\n'):
+        if "AF" in line[0:2]:
+            output.append(line)
+        elif "# QUAL" in line[0:6]:
+            break
+
+    return output

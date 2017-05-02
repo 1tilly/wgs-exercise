@@ -66,10 +66,12 @@ def get_intersection(files, output_dir):
     for f in files:
         rc, output = execute_bcftools(index_cmd, [f])
         if rc is not 0:
+            # ToDo: Errorhandling
             print(output)
     # create intersection
     rc, output = execute_bcftools(intersection_cmd, files, output_cmd)
     if rc is not 0:
+            # ToDo: Errorhandling
             print(output)
 
 

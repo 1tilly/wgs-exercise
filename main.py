@@ -9,6 +9,7 @@ The main module holds all other modules and controls the workflow.
 
 ToDo:
 	this could be extended for a nice CLI (with docopt)
+	allow generation of statistic as well as reading it from file
 '''
 
 import wrapper
@@ -28,9 +29,9 @@ PATH_GNOMAD_EUR_VCFGZ = "data/isec_EUR_Gnomad/0003.vcf"
 
 
 def shallow_analysis():
-	bcf_stats = wrapper.get_bcf_stats(PATH_1K_VCFGZ)
-	stat_summary = parser.analyze_bcf_stats(bcf_stats)
-	output.print_statistic_summary(stat_summary)
+    bcf_stats = wrapper.get_bcf_stats(PATH_1K_VCFGZ)
+    stat_summary = parser.analyze_bcf_stats(bcf_stats)
+    output.print_statistic_summary(stat_summary)
 
 
 def create_EUR_stats():
@@ -41,3 +42,13 @@ def create_EUR_stats():
 	with open(OUTPUT_BCFTOOLS+"bcf_stats_gnomad_EUR", 'w') as f:
 		f.write(bcf_stats_gnomad_EUR)
 		
+def plot_af_stats():
+	with open(OUTPUT_BCFTOOLS + 'bcf_stats_1k_EUR', 'r') as f:
+		bcf_stats = f.read()
+		EUR_1k_af = parser.extract_allele_frequencies(bcf_stats)
+	with open(OUTPUT_BCFTOOLS + 'bcf_stats_gnomad_EUR', 'r') as f:
+		bcf_stats = f.read()
+		EUR_gnomad_af = parser.extract_allele_frequencies(bcf_stats)
+	output.plot_variant_frequencies(EUR_1k_af)
+
+plot_af_stats()
