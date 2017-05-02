@@ -36,7 +36,7 @@ def print_statistic_summary(stat_dict):
 	v = stat_dict.pop('filename')
 	output = "Statistic summary for {}: \n".format(v)
 	for k in stat_dict:
-		output += "{}:\t{}\n".format(HUMAN_READABLE[k], stat_dict[k].rstrip())
+		output += "\t{}:\t{}\n".format(HUMAN_READABLE[k], stat_dict[k].rstrip())
 	print(output)
 
 

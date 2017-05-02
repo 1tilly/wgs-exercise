@@ -16,7 +16,7 @@ output.
 
 """ Parses the bcftools stats output for a statistic summary. Iterates over each
 	 	line and breaks the iteration if a specific line is reached (at the moment: 
-	 	"# QUAL")
+	 	"# AF")
 		Args: 
 			bcf_stats_output (iterable, e.g.: string or file): 
                 the output of the bcftools stats command
@@ -24,13 +24,12 @@ output.
 			dictionary of statistics, holding the filename, sample_count, 
 				record_count, snp_count and indel_count. 
         ToDo:
-            get the filename from the stats_output
             the bcftools stats are multiple csvs in one file, would be nice 
-            to parse them accordingly
+                to parse them accordingly
             maybe split into multiple methods
 """ 
-def analyze_bcf_stats(bcf_stats_output):
-    stat_dict = {"filename":"HereShouldBeTheFilename"}
+def analyze_bcf_stats(bcf_stats_output, filename):
+    stat_dict = {"filename":filename}
     for line in bcf_stats_output.split('\n'):
         if "SN" in line[0:4]:    
             if "number of samples" in line:
@@ -45,10 +44,7 @@ def analyze_bcf_stats(bcf_stats_output):
             split_line = line.split("\t")
             stat_dict['tstv'] = split_line[4]
             stat_dict['tstv_1st_alt'] = split_line[7]
-        elif "AF" in line[0:2]:
-            #ToDo: check what to do with the 20 (or more) bins maybe plot them?
-            pass   
-        elif "# QUAL" in line[0:6]:
+        elif "# AF" in line[0:4]:
             break 
 
     return stat_dict

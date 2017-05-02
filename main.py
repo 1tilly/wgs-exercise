@@ -28,20 +28,22 @@ PATH_1K_EUR_VCFGZ = "data/isec_EUR_Gnomad/0002.vcf"
 PATH_GNOMAD_EUR_VCFGZ = "data/isec_EUR_Gnomad/0003.vcf"
 
 
-def shallow_analysis():
-    bcf_stats = wrapper.get_bcf_stats(PATH_1K_VCFGZ)
+def shallow_analysis(file_path):
+    bcf_stats = wrapper.get_bcf_stats(file_path)
     stat_summary = parser.analyze_bcf_stats(bcf_stats)
     output.print_statistic_summary(stat_summary)
 
+def create_intersection(files, output_dir):
+	wrapper.get_intersection(files, output_dir)
 
-def create_EUR_stats():
-	bcf_stats_1k_EUR = wrapper.get_stats_with_bins(0.0,1.0, 0.05, PATH_1K_EUR_VCFGZ)
+def create_EUR_stats(eur_1k_file, eur_gnomad_file):
+	bcf_stats_1k_EUR = wrapper.get_stats_with_bins(0.0,1.0, 0.05, eur_1k_file)
 	with open(OUTPUT_BCFTOOLS+"bcf_stats_1k_EUR", 'w') as f:
 		f.write(bcf_stats_1k_EUR)
-	bcf_stats_gnomad_EUR = wrapper.get_stats_with_bins(0.0,1.0, 0.05, PATH_GNOMAD_EUR_VCFGZ)
+	bcf_stats_gnomad_EUR = wrapper.get_stats_with_bins(0.0,1.0, 0.05, eur_gnomad_file)
 	with open(OUTPUT_BCFTOOLS+"bcf_stats_gnomad_EUR", 'w') as f:
 		f.write(bcf_stats_gnomad_EUR)
-		
+
 def plot_af_stats():
 	with open(OUTPUT_BCFTOOLS + 'bcf_stats_1k_EUR', 'r') as f:
 		bcf_stats = f.read()
@@ -51,8 +53,7 @@ def plot_af_stats():
 		EUR_gnomad_af = parser.extract_allele_frequencies(bcf_stats)
 	output.plot_allele_frequencies(EUR_1k_af, '1000Genomes')
 	#output.plot_allele_frequency_comparison(EUR_1k_af, EUR_gnomad_af, ['1000Genomes','GnomAD'])
-
-
+		
 def subset_filtered_list():
 	population_list = open("data/1k_all.panel", 'r')
 	eur_list = wrapper.filter_list(population_list, "EUR")
