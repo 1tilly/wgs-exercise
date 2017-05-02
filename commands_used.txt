@@ -20,9 +20,9 @@ bcftools stats data/gz/gnomad.genomes.r2.0.1.sites.22.vcf.gz > bcftools-output/s
 # intersection
 bcftools index data/gnomad_chr22.vcf.gz 
 bcftools index data/EUR.chr22.phase3.vcf.gz
-bcftools isec data/EUR.chr22.phase3.vcf.gz data/gnomad_chr22.vcf.gz -p data/isec_EUR_Gnomad.vcf.gz
+bcftools isec data/EUR.chr22.phase3.vcf.gz data/gnomad_chr22.vcf.gz -p data/isec_EUR_Gnomad
 bcftools index data/nonFIN.chr22.phase3.vcf.gz --threads 4
-bcftools isec --threads 4 data/nonFIN.chr22.phase3.vcf.gz data/gnomad_chr22.vcf.gz -p data/isec_nonFIN_Gnomad.vcf.gz 
+bcftools isec --threads 4 data/nonFIN.chr22.phase3.vcf.gz data/gnomad_chr22.vcf.gz -p data/isec_nonFIN_Gnomad 
 
 
 

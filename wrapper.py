@@ -17,6 +17,7 @@ __name__ = "Wrapper"
 
  ToDo:
     create docstrings for methods and module variables
+    extend bcftools calls with the threads option (number of threads as config?)
  '''
 
 # tools
@@ -49,8 +50,30 @@ def execute_bcftools(command, file_path, options=[]):
     return rc, output.decode("utf-8")
 
 
-# Testing the execute_tool methods
-# The following part will be extended
+def filter_for_EUR():
+    # ToDo: filter a given file with vcf-subset for a list of individuals
+    pass
+
+def get_intersection(files, output_dir):
+    """ 
+        Example: get_intersection(['data/test_src/0000.vcf.gz', 'data/test_src/0002.vcf.gz'], 'data/test')
+    """
+    index_cmd = ['index']
+    intersection_cmd = ['isec', '-n='+str(len(files))]
+    # The -p option defines a prefix as well as an output directory
+    output_cmd = ['-p', output_dir]
+    # Index the files; bcftools needs this for a fast intersection
+    for f in files:
+        rc, output = execute_bcftools(index_cmd, [f])
+        if rc is not 0:
+            print(output)
+    # create intersection
+    rc, output = execute_bcftools(intersection_cmd, files, output_cmd)
+    if rc is not 0:
+            print(output)
+
+
+""" Testing the execute_tool methods; the following part will be extended """
 
 def get_bcf_stats(file_path):
     command = ['stats']
@@ -65,6 +88,9 @@ def get_bcf_stats(file_path):
 
 
 def get_stats_with_bins(start, end, step, file_path):
+    """ 
+        Example: get_stats_with_bins(0.0,1.0,0.05,'data/test/0000.vcf')
+    """
     bins = np.arange(start, end, step)
     command = ['stats']
     options = ['--af-bins', "(" + ", ".join([str(x) for x in bins]) + ")"]
@@ -87,3 +113,4 @@ def get_counts(file_path):
     else:
         # ToDo: Errorhandling
         return output
+
