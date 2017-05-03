@@ -39,7 +39,7 @@ def execute_vcftools(file_path, filtering=[], output_options=[]):
 
 
 def execute_bcftools(command, file_path, options=[]):
-    cmd = [PATH_BCFTOOLS] + command + options + file_path
+    cmd = [PATH_BCFTOOLS] + command + ['--threads', '4'] + options + file_path
     process = sp.Popen(
         cmd,
         stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
@@ -76,7 +76,7 @@ def wrap_vcf_subset(vcf_file, list, prefix):
     fill_an_ac_process = sp.Popen(('fill-an-ac',), stdin=vcf_subset_process.stdout, stdout=sp.PIPE)
     with open("{}_subset_output.vcf.gz".format(prefix), "w") as output_file:
         bgzip_process = sp.Popen(('bgzip', '-c'), stdin=fill_an_ac_process.stdout, stdout=output_file)
-    
+        bgzip_process.wait()
 
 
 

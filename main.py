@@ -13,6 +13,7 @@ ToDo:
 
 import argparse
 import sys
+import os
 
 import wrapper
 import parser
@@ -31,23 +32,23 @@ def shallow_analysis(file_path):
 def create_intersection(files, output_dir):
 	wrapper.get_intersection(files, output_dir)
 
-def create_EUR_stats(eur_1k_file, eur_gnomad_file):
-	bcf_stats_1k_EUR = wrapper.get_stats_with_bins(0.0,1.0, 0.05, eur_1k_file)
-	with open(OUTPUT_BCFTOOLS+"bcf_stats_1k_EUR", 'w') as f:
-		f.write(bcf_stats_1k_EUR)
-	bcf_stats_gnomad_EUR = wrapper.get_stats_with_bins(0.0,1.0, 0.05, eur_gnomad_file)
-	with open(OUTPUT_BCFTOOLS+"bcf_stats_gnomad_EUR", 'w') as f:
-		f.write(bcf_stats_gnomad_EUR)
+def create_pop_stats(pop_1k_file, pop_gnomad_file, population):
+	bcf_stats_1k_pop = wrapper.get_stats_with_bins(0.0,1.0, 0.05, pop_1k_file)
+	with open(OUTPUT_BCFTOOLS+"bcf_stats_1k_{}".format(population), 'w') as f:
+		f.write(bcf_stats_1k_pop)
+	bcf_stats_gnomad_pop = wrapper.get_stats_with_bins(0.0,1.0, 0.05, pop_gnomad_file)
+	with open(OUTPUT_BCFTOOLS+"bcf_stats_gnomad_{}".format(population), 'w') as f:
+		f.write(bcf_stats_gnomad_pop)
 
-def plot_af_stats():
-	with open(OUTPUT_BCFTOOLS + 'bcf_stats_1k_EUR', 'r') as f:
+def plot_af_stats_comparison(population, output_file, maf=False):
+	with open(OUTPUT_BCFTOOLS + "bcf_stats_1k_{}".format(population) , 'r') as f:
 		bcf_stats = f.read()
-		EUR_1k_af = parser.extract_allele_frequencies(bcf_stats)
-	with open(OUTPUT_BCFTOOLS + 'bcf_stats_gnomad_EUR', 'r') as f:
+		AF_1k = parser.extract_allele_frequencies(bcf_stats)
+	with open(OUTPUT_BCFTOOLS + "bcf_stats_gnomad_{}".format(population), 'r') as f:
 		bcf_stats = f.read()
-		EUR_gnomad_af = parser.extract_allele_frequencies(bcf_stats)
-	#output.plot_allele_frequencies(EUR_1k_af, '1000Genomes')
-	output.plot_allele_frequency_comparison(EUR_1k_af, EUR_gnomad_af, ['1000Genomes','GnomAD'])
+		AF_gnomad = parser.extract_allele_frequencies(bcf_stats)
+	#output.plot_allele_frequencies(AF_1k_ '1000Genomes')
+	output.plot_allele_frequency_comparison(AF_1k, AF_gnomad, ['1000Genomes','GnomAD'], output_file, maf)
 		
 def subset_filtered_list(file):
 	population_list = open('data/1k_phase3.panel', 'r')
@@ -79,6 +80,8 @@ if args.download:
 if args.summary:
 	shallow_analysis(args.summary)
 elif args.files:
+	if not os.path.exists('data'):
+    	os.makedirs('data')
 	if len(args.files) > 2:
 		print("Only 2 files are allowed. You gave: {}".format(len(args.files)))
 		sys.exit(1)
@@ -92,5 +95,11 @@ elif args.files:
 		create_intersection(["data/eur_1k_subset_output.vcf.gz", args.files[1]], "data/isec_eur")
 		print("EUR Intersection created!")
 		print("Creating EUR stats...")
-		create_EUR_stats("data/isec_eur/0002.vcf", "data/isec_eur/0003.vcf")
-		plot_af_stats()
+		create_pop_stats("data/isec_eur/0000.vcf", "data/isec_eur/0001.vcf", 'EUR')
+		plot_af_stats_comparison('EUR', 'EUR_af_stats.png')
+		print("Intersecting filtered 1k_nonFIN with gnomAD...")
+		create_intersection(["data/nonFin_1k_subset_output.vcf.gz", args.files[1]], "data/isec_nonFin")
+		print("nonFin Intersection created!")
+		print("Creating nonFin stats...")
+		create_pop_stats("data/isec_nonFin/0000.vcf", "data/isec_nonFin/0001.vcf", 'nonFin')
+		plot_af_stats_comparison('nonFin', 'nonFin_af_stats.png', True)

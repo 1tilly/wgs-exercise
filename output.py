@@ -40,7 +40,7 @@ def print_statistic_summary(stat_dict):
 	print(output)
 
 
-def plot_allele_frequencies(af_stats, legend, maf=False):
+def plot_allele_frequencies(af_stats, legend, output, maf=False):
 	af_bins = []
 	n_of_snps = []
 	n_of_indels = []
@@ -67,10 +67,13 @@ def plot_allele_frequencies(af_stats, legend, maf=False):
 	plot2.set_ylabel('Number of INDELs')
 	plot2.set_xlabel('Allele frequencies')
 	plot2.legend()
-	plt.show()
+	if output is not '':
+		plt.savefig(output)
+	else:
+		plt.show()
 
 
-def plot_allele_frequency_comparison(stats1, stats2, legend, maf=False):
+def plot_allele_frequency_comparison(stats1, stats2, legend, output, maf=False):
 	af_bins1 = []
 	n_of_snps1 = []
 	n_of_indels1 = []
@@ -113,4 +116,7 @@ def plot_allele_frequency_comparison(stats1, stats2, legend, maf=False):
 	plot2.set_ylabel('Number of INDELs')
 	plot2.set_xlabel('Allele frequencies')
 	plot2.legend()
-	plt.show()
+	if output is not '':
+		plt.savefig(output)
+	else:
+		plt.show()
