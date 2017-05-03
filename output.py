@@ -120,3 +120,11 @@ def plot_allele_frequency_comparison(stats1, stats2, legend, output, maf=False):
 		plt.savefig(output)
 	else:
 		plt.show()
+
+
+def print_hwe_stat(kept, total):
+	kept = int(kept)
+	total = int(total)
+	kept = total-kept
+	print("HWE Quality:")
+	print("{} out of {} Sites have a HWE below 0.05 and an MAF of 0.5".format(kept, total))

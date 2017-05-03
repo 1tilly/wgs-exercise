@@ -144,3 +144,14 @@ def get_counts(file_path):
         # ToDo: Errorhandling
         return output
 
+def get_hwe_count(file_path, hwe, maf, out):
+    file_path = [file_path]
+    filtering = ['--hwe', hwe, '--maf', maf]
+    out_option = ['--out', out]
+    rc, output = execute_vcftools(file_path, filtering, out_option)
+    if rc is 0:
+        return output
+    else:
+        # ToDo: Errorhandling
+        return output
+        

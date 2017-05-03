@@ -59,6 +59,11 @@ def subset_filtered_list(file):
 	wrapper.wrap_vcf_subset(file, eur_column, "data/eur_1k")
 	wrapper.wrap_vcf_subset(file, nonFin_column, "data/nonFin_1k")
 
+def hwe_analysis(file_path, out):
+	wrapper.get_hwe_count(file_path, 0.05, 0.5, out)
+	kept, total = parser.get_hwe_quality(out+'.log')
+	output.print_hwe_stat(kept, total)
+
 def initial_download(chromosome):
 	downloader.download_1k(chromosome)
 	downloader.download_1k_panel()
@@ -113,3 +118,4 @@ elif args.files:
 		print("Creating nonFin stats...")
 		create_pop_stats("data/isec_nonFin/0000.vcf", "data/isec_nonFin/0001.vcf", 'nonFin')
 		plot_af_stats_comparison('nonFin', 'nonFin_af_stats.png', True)
+		hwe_analysis("data/isec_nonFin/0000.vcf", "nonFin_hwe")

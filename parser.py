@@ -60,3 +60,10 @@ def extract_allele_frequencies(bcf_stats_output):
             break
 
     return output
+
+def get_hwe_quality(vcf_file):
+    with open(vcf_file, 'r') as f:
+        for line in f:
+            if "Sites" in line:
+                line = line.split(" ")
+                return line[3], line[-2]
