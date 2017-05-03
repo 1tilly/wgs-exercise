@@ -77,6 +77,7 @@ def wrap_vcf_subset(vcf_file, list, prefix):
     with open("{}_subset_output.vcf.gz".format(prefix), "w") as output_file:
         bgzip_process = sp.Popen(('bgzip', '-c'), stdin=fill_an_ac_process.stdout, stdout=output_file)
         bgzip_process.wait()
+    # ToDo: Errorhandling
 
 
 

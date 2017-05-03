@@ -74,20 +74,30 @@ arg_parser.add_argument('--summary', help='takes one file for a statistic summar
 
 args = arg_parser.parse_args()
 
+# checking if the data directory exists, which is used in most of the workflows
+if not os.path.exists('data'):
+	os.makedirs('data')
+
 if args.download:
 	initial_download(args.download)
 
 if args.summary:
-	shallow_analysis(args.summary)
+	if os.path.isfile(args.summary):
+		shallow_analysis(args.summary)
+	else:
+		print("The file {} does not exist.".format(args.summary))
+		sys.exit(1)
 elif args.files:
-	if not os.path.exists('data'):
-    	os.makedirs('data')
 	if len(args.files) > 2:
 		print("Only 2 files are allowed. You gave: {}".format(len(args.files)))
 		sys.exit(1)
 	else:
 		for file in args.files:
-			shallow_analysis(file)
+			if os.path.isfile(file):
+				shallow_analysis(file)
+			else:
+				print("The file {} does not exist.".format(file))
+				sys.exit(1)
 		print("Creating EUR and nonFIN-EUR Subsets...")
 		subset_filtered_list(args.files[0])
 		print("Subsets created!")
