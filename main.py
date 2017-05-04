@@ -48,6 +48,7 @@ def plot_af_stats_comparison(population, output_file, maf=False):
 		bcf_stats = f.read()
 		AF_gnomad = parser.extract_allele_frequencies(bcf_stats)
 	#output.plot_allele_frequencies(AF_1k_ '1000Genomes')
+	print(AF_gnomad, AF_1k)
 	output.plot_allele_frequency_comparison(AF_1k, AF_gnomad, ['1000Genomes','GnomAD'], output_file, maf)
 		
 def subset_filtered_list(file):
@@ -82,6 +83,11 @@ args = arg_parser.parse_args()
 # checking if the data directory exists, which is used in most of the workflows
 if not os.path.exists('data'):
 	os.makedirs('data')
+if not os.path.exists(OUTPUT_BCFTOOLS):
+	os.makedirs(OUTPUT_BCFTOOLS)
+if not os.path.exists(OUTPUT_VCFTOOLS):
+	os.makedirs(OUTPUT_VCFTOOLS)
+
 
 if args.download:
 	initial_download(args.download)
@@ -118,7 +124,6 @@ elif args.files:
 		print("Creating nonFin stats...")
 		create_pop_stats("data/isec_nonFin/0000.vcf", "data/isec_nonFin/0001.vcf", 'nonFin')
 		print("Stats created!")
-		plot_af_stats_comparison('nonFin', 'nonFin_af_stats.png', True)
 		print("Plotted nonFin stats! Saved as 'nonFin_af_stats.png'")
 		hwe_analysis("data/isec_nonFin/0000.vcf", "nonFin_hwe")
 		print("Full analysis: DONE!")

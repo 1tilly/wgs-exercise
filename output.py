@@ -83,7 +83,7 @@ def plot_allele_frequency_comparison(stats1, stats2, legend, output, maf=False):
 	for line in stats1:
 		line = line.split('\t')
 		# collect data if maf is True and af is <= 0.5 or maf is False
-		if not(maf and line[2] > 0.5):
+		if not(maf and float(line[2]) > 0.5):
 			af_bins1.append(line[2])
 			n_of_snps1.append(line[3])
 			n_of_indels1.append(line[6])
@@ -93,13 +93,12 @@ def plot_allele_frequency_comparison(stats1, stats2, legend, output, maf=False):
 	for line in stats2:
 		line = line.split('\t')
 		# collect data if maf is True and af is <= 0.5 or maf is False
-		if not(maf and line[2] > 0.5):
+		if not(maf and float(line[2]) > 0.5):
 			af_bins2.append(line[2])
 			n_of_snps2.append(line[3])
 			n_of_indels2.append(line[6])
 		else:
 			break
-
 
 	fig = plt.figure()
 	plot1 = fig.add_subplot(211)
