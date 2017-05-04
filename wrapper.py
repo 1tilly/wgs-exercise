@@ -17,7 +17,7 @@ __name__ = "Wrapper"
 
  ToDo:
     create docstrings for methods and module variables
-    extend bcftools calls with the threads option (number of threads as config?)
+
  '''
 
 # tools
