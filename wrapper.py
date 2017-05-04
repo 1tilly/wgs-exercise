@@ -155,6 +155,3 @@ def get_hwe_count(file_path, hwe, maf, out):
         # ToDo: Errorhandling
         return output
         
-
-# a, b = execute_vcftools(['data/isec_nonFin/0000.vcf'], ['--hwe', '0.05', '--maf', '0.5'])
-# print(a,b)

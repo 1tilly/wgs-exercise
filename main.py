@@ -48,7 +48,7 @@ def plot_af_stats_comparison(population, output_file, maf=False):
 		bcf_stats = f.read()
 		AF_gnomad = parser.extract_allele_frequencies(bcf_stats)
 	#output.plot_allele_frequencies(AF_1k_ '1000Genomes')
-	print(AF_gnomad, AF_1k)
+
 	output.plot_allele_frequency_comparison(AF_1k, AF_gnomad, ['1000Genomes','GnomAD'], output_file, maf)
 		
 def subset_filtered_list(file):
@@ -122,8 +122,8 @@ elif args.files:
 		create_intersection(["data/nonFin_1k_subset_output.vcf.gz", args.files[1]], "data/isec_nonFin")
 		print("nonFin Intersection created!")
 		print("Creating nonFin stats...")
-		create_pop_stats("data/isec_nonFin/0000.vcf", "data/isec_nonFin/0001.vcf", 'nonFin')
 		print("Stats created!")
+		create_pop_stats("data/isec_nonFin/0000.vcf", "data/isec_nonFin/0001.vcf", 'nonFin')
 		print("Plotted nonFin stats! Saved as 'nonFin_af_stats.png'")
-		hwe_analysis("data/isec_nonFin/0000.vcf", "nonFin_hwe")
+		#hwe_analysis("data/isec_nonFin/0000.vcf", "nonFin_hwe")
 		print("Full analysis: DONE!")
