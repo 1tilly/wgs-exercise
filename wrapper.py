@@ -35,6 +35,9 @@ def execute_vcftools(file_path, filtering=[], output_options=[]):
     rc = process.returncode
     if rc != 0:
         output = err
+    # ToDo: this is not a nice behavior to have, why is vcftools printing standard information as error without a non-zero returncode?!
+    if output is '' and err is not '':
+        output = err
     return rc, output.decode("utf-8")
 
 
@@ -144,14 +147,13 @@ def get_counts(file_path):
         # ToDo: Errorhandling
         return output
 
-def get_hwe_count(file_path, hwe, maf, out):
+def get_hwe_count(file_path, hwe, maf):
     file_path = [file_path]
     filtering = ['--hwe', hwe, '--maf', maf]
-    out_option = ['--out', out]
-    rc, output = execute_vcftools(file_path, filtering, out_option)
+    rc, output = execute_vcftools(file_path, filtering)
     if rc is 0:
         return output
     else:
         # ToDo: Errorhandling
         return output
-        
+
