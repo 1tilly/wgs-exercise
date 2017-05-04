@@ -60,7 +60,7 @@ def subset_filtered_list(file):
 	wrapper.wrap_vcf_subset(file, nonFin_column, "data/nonFin_1k")
 
 def hwe_analysis(file_path, out):
-	wrapper.get_hwe_count(file_path, 0.05, 0.5, out)
+	wrapper.get_hwe_count(file_path, '0.05', '0.5', out)
 	kept, total = parser.get_hwe_quality(out+'.log')
 	output.print_hwe_stat(kept, total)
 
@@ -117,5 +117,8 @@ elif args.files:
 		print("nonFin Intersection created!")
 		print("Creating nonFin stats...")
 		create_pop_stats("data/isec_nonFin/0000.vcf", "data/isec_nonFin/0001.vcf", 'nonFin')
+		print("Stats created!")
 		plot_af_stats_comparison('nonFin', 'nonFin_af_stats.png', True)
+		print("Plotted nonFin stats! Saved as 'nonFin_af_stats.png'")
 		hwe_analysis("data/isec_nonFin/0000.vcf", "nonFin_hwe")
+		print("Full analysis: DONE!")
